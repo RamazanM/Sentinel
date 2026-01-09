@@ -1,0 +1,54 @@
+version: "3"
+services:
+  ingestion-service:
+    build:
+      context: ./ingestion-service
+    container_name: ingestion-service
+    networks:
+      - shared-net
+    links:
+      - redis
+    depends_on:
+      - redis
+
+  rule-engine-service:
+    build:
+      context: ./rule-engine-service
+    ports:
+      - "8080:8080"
+    container_name: rule-engine-service
+    environment:
+      MONGODB_HOST: mongo
+      MONGODB_PORT: 27017
+      MONGODB_DB: sentinel-db
+    links:
+      - mongo
+      - redis
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - shared-net
+
+  mongo:
+    image: 'mongo'
+    ports:
+      - "27017:27017"
+    container_name: mongo
+    networks:
+      - shared-net
+
+  redis:
+    image: redis:latest
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    command: [ "redis-server" ]
+    networks:
+      - shared-net
+
+networks:
+  shared-net:
+    driver: bridge
