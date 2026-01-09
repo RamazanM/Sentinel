@@ -5,12 +5,12 @@ plugins {
 }
 
 group = 'com.ramazanm.sentinel'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 description = 'Ingestion service part of Sentinel Project'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
